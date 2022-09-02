@@ -1,4 +1,5 @@
 import os
+from unicodedata import category
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -30,6 +31,22 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     """
+
+    @app.route("/categories")
+    def retrieve_categories():
+        selection = Category.query.order_by(Category.id).all()
+        categories = [category.format() for category in selection]
+
+        if len(categories) == 0:
+            abort(404)
+
+        return jsonify(
+            {
+                "success": True,
+                "categories": categories,
+                "total_categories": len(selection),
+            }
+        )
 
     """
     @TODO:
