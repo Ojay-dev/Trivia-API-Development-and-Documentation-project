@@ -59,6 +59,29 @@ def create_app(test_config=None):
             }
         )
 
+    @app.route("/categories/<int:category_id>/questions")
+    def retrieve_question_by_category(category_id):
+
+        selection = (
+            Question.query.filter(Question.category == category_id)
+            .order_by(Question.id)
+            .all()
+        )
+
+        current_questions = paginate_questions(selection)
+
+        if len(current_questions) == 0:
+            abort(404)
+
+        return jsonify(
+            {
+                "success": True,
+                "questions": current_questions,
+                "total_questions": len(selection),
+                "current_category": current_questions[0]["category"],
+            }
+        )
+
     """
     @TODO:
     Create an endpoint to handle GET requests for questions,
@@ -134,7 +157,7 @@ def create_app(test_config=None):
     """
 
     @app.route("/questions", methods=["POST"])
-    def create_question():
+    def create_or_search_question():
         body = request.get_json()
 
         new_question = body.get("question", None)
@@ -149,7 +172,6 @@ def create_app(test_config=None):
                     Question.question.ilike("%{}%".format(search))
                 )
                 current_questions = paginate_questions(selection)
-                print(current_questions)
 
                 return jsonify(
                     {
