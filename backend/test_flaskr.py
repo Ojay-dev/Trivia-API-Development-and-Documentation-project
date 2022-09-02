@@ -27,6 +27,13 @@ class TriviaTestCase(unittest.TestCase):
             # create all tables
             self.db.create_all()
 
+        self.new_question = {
+            "question": "The concept of gravity was discovered by which famous physicist?",
+            "answer": "Sir Isaac Newton",
+            "difficulty": 4,
+            "category": 1,
+        }
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -84,6 +91,23 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "unprocessable")
+
+    def test_create_new_question(self):
+        res = self.client().post("/questions", json=self.new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["created"])
+        self.assertTrue(len(data["questions"]))
+
+    def test_405_if_book_creation_not_allowed(self):
+        res = self.client().post("/questions/45", json=self.new_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "method not allowed")
 
 
 # Make the tests conveniently executable
