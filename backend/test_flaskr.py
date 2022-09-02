@@ -53,6 +53,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertTrue(data["total_questions"])
         self.assertTrue(len(data["questions"]))
+        self.assertTrue(data["categories"])
+        self.assertTrue(data["current_category"])
 
     def test_404_sent_requesting_beyond_valid_questions_page(self):
         res = self.client().get("/questions?page=1000", json={"rating": 1})
