@@ -12,7 +12,7 @@ class QuestionView extends Component {
       page: 1,
       totalQuestions: 0,
       categories: {},
-      currentCategory: null,
+      currentCategory: null
     };
   }
 
@@ -29,14 +29,14 @@ class QuestionView extends Component {
           questions: result.questions,
           totalQuestions: result.total_questions,
           categories: result.categories,
-          currentCategory: result.current_category,
+          currentCategory: result.current_category
         });
         return;
       },
       error: (error) => {
         alert('Unable to load questions. Please try your request again');
         return;
-      },
+      }
     });
   };
 
@@ -71,14 +71,14 @@ class QuestionView extends Component {
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
-          currentCategory: result.current_category,
+          currentCategory: result.current_category
         });
         return;
       },
       error: (error) => {
         alert('Unable to load questions. Please try your request again');
         return;
-      },
+      }
     });
   };
 
@@ -90,21 +90,21 @@ class QuestionView extends Component {
       contentType: 'application/json',
       data: JSON.stringify({ searchTerm: searchTerm }),
       xhrFields: {
-        withCredentials: true,
+        withCredentials: true
       },
       crossDomain: true,
       success: (result) => {
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
-          currentCategory: result.current_category,
+          currentCategory: result.current_category
         });
         return;
       },
       error: (error) => {
         alert('Unable to load questions. Please try your request again');
         return;
-      },
+      }
     });
   };
 
@@ -120,16 +120,17 @@ class QuestionView extends Component {
           error: (error) => {
             alert('Unable to load questions. Please try your request again');
             return;
-          },
+          }
         });
       }
     }
   };
 
   render() {
+    // return <></>;
     return (
-      <div className='question-view'>
-        <div className='categories-list'>
+      <div className="question-view">
+        <div className="categories-list">
           <h2
             onClick={() => {
               this.getQuestions();
@@ -147,7 +148,7 @@ class QuestionView extends Component {
               >
                 {this.state.categories[id]}
                 <img
-                  className='category'
+                  className="category"
                   alt={`${this.state.categories[id].toLowerCase()}`}
                   src={`${this.state.categories[id].toLowerCase()}.svg`}
                 />
@@ -156,7 +157,7 @@ class QuestionView extends Component {
           </ul>
           <Search submitSearch={this.submitSearch} />
         </div>
-        <div className='questions-list'>
+        <div className="questions-list">
           <h2>Questions</h2>
           {this.state.questions.map((q, ind) => (
             <Question
@@ -168,7 +169,7 @@ class QuestionView extends Component {
               questionAction={this.questionAction(q.id)}
             />
           ))}
-          <div className='pagination-menu'>{this.createPagination()}</div>
+          <div className="pagination-menu">{this.createPagination()}</div>
         </div>
       </div>
     );
