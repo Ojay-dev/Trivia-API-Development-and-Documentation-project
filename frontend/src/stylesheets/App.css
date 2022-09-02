@@ -13,6 +13,11 @@
   color: dodgerblue;
 }
 
+.App-header > h1,
+.App-header > h2 {
+  cursor: pointer;
+}
+
 .App-intro {
   font-size: large;
 }
