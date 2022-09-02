@@ -141,43 +141,44 @@ def create_app(test_config=None):
         answer = body.get("answer", None)
         difficulty = body.get("difficulty", None)
         category = body.get("category", None)
-        # search = body.get("search", None)
+        search = body.get("searchTerm", None)
 
         try:
-            # if search:
-            #     selection = Question.query.order_by(Question.id).filter(
-            #         Question.title.ilike("%{}%".format(search))
-            #     )
-            #     current_questions = paginate_questions(request, selection)
+            if search:
+                selection = Question.query.order_by(Question.id).filter(
+                    Question.question.ilike("%{}%".format(search))
+                )
+                current_questions = paginate_questions(selection)
+                print(current_questions)
 
-            #     return jsonify(
-            #         {
-            #             "success": True,
-            #             "questions": current_questions,
-            #             "questions": len(selection.all()),
-            #         }
-            #     )
+                return jsonify(
+                    {
+                        "success": True,
+                        "questions": current_questions,
+                        "total_questions": len(selection.all()),
+                    }
+                )
 
-            # else:
-            question = Question(
-                question=new_question,
-                answer=answer,
-                difficulty=difficulty,
-                category=category,
-            )
-            question.insert()
+            else:
+                question = Question(
+                    question=new_question,
+                    answer=answer,
+                    difficulty=difficulty,
+                    category=category,
+                )
+                question.insert()
 
-            selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(selection)
+                selection = Question.query.order_by(Question.id).all()
+                current_questions = paginate_questions(selection)
 
-            return jsonify(
-                {
-                    "success": True,
-                    "created": question.id,
-                    "questions": current_questions,
-                    "total_questions": len(Question.query.all()),
-                }
-            )
+                return jsonify(
+                    {
+                        "success": True,
+                        "created": question.id,
+                        "questions": current_questions,
+                        "total_questions": len(Question.query.all()),
+                    }
+                )
 
         except:
             abort(422)
