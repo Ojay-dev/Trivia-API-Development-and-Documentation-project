@@ -21,7 +21,7 @@ def get_and_format_categories():
     return categories
 
 
-def paginate_questions(selection):
+def paginate_questions(request, selection):
     page = request.args.get("page", 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
@@ -68,7 +68,7 @@ def create_app(test_config=None):
             .all()
         )
 
-        current_questions = paginate_questions(selection)
+        current_questions = paginate_questions(request, selection)
 
         if len(current_questions) == 0:
             abort(404)
@@ -85,7 +85,7 @@ def create_app(test_config=None):
     @app.route("/questions")
     def retrieve_questions():
         selection = Question.query.order_by(Question.id).all()
-        current_questions = paginate_questions(selection)
+        current_questions = paginate_questions(request, selection)
 
         if len(current_questions) == 0:
             abort(404)
@@ -110,7 +110,7 @@ def create_app(test_config=None):
 
             question.delete()
             selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(selection)
+            current_questions = paginate_questions(request, selection)
 
             return jsonify(
                 {
@@ -139,7 +139,7 @@ def create_app(test_config=None):
                 selection = Question.query.order_by(Question.id).filter(
                     Question.question.ilike("%{}%".format(search))
                 )
-                current_questions = paginate_questions(selection)
+                current_questions = paginate_questions(request, selection)
 
                 return jsonify(
                     {
@@ -159,7 +159,7 @@ def create_app(test_config=None):
                 question.insert()
 
                 selection = Question.query.order_by(Question.id).all()
-                current_questions = paginate_questions(selection)
+                current_questions = paginate_questions(request, selection)
 
                 return jsonify(
                     {
@@ -223,7 +223,7 @@ def create_app(test_config=None):
         return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
 
     @app.errorhandler(405)
-    def not_found(error):
+    def method_not_allowed(error):
         return (
             jsonify({"success": False, "error": 405, "message": "method not allowed"}),
             405,
