@@ -237,6 +237,37 @@ def create_app(test_config=None):
     and shown whether they were correct or not.
     """
 
+    @app.route("/quizzes", methods=["POST"])
+    def create_quiz_questions():
+        try:
+            body = request.get_json()
+
+            previous_questions = body.get("previous_questions", None)
+            quiz_category = body.get("quiz_category", None)
+
+            selection = Question.query.filter(~Question.id.in_(previous_questions))
+
+            if "id" in quiz_category:
+                category = quiz_category["id"]
+                if category:
+                    selection = selection.filter(Question.category == category)
+
+            selection = selection.all()
+            question = None
+
+            if len(selection):
+                question = random.choice(selection)
+
+            return jsonify(
+                {
+                    "success": True,
+                    "question": question.format() if question else question,
+                }
+            )
+
+        except:
+            abort(422)
+
     @app.errorhandler(404)
     def not_found(error):
         return (

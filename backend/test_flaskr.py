@@ -151,10 +151,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["question"]["id"] not in previousQuestion, True)
 
     def test_null_if_all_questions_answered(self):
-        previousQuestion = [5, 4, 7, 14]
+        previousQuestion = [16, 17, 18, 19]
         res = self.client().post(
             "/quizzes",
-            json={"previous_questions": previousQuestion, "quiz_category": {"id": 3}},
+            json={"previous_questions": previousQuestion, "quiz_category": {"id": 2}},
         )
         data = json.loads(res.data)
 
