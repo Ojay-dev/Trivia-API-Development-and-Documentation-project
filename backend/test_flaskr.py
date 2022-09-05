@@ -137,6 +137,52 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["total_questions"], 0)
         self.assertEqual(len(data["questions"]), 0)
 
+    def test_get_quiz_question(self):
+        previousQuestion = [5, 4, 7]
+        res = self.client().post(
+            "/quizzes",
+            json={"previous_questions": previousQuestion, "quiz_category": {"id": 1}},
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["question"])
+        self.assertEqual(data["question"]["id"] not in previousQuestion, True)
+
+    def test_null_if_all_questions_answered(self):
+        previousQuestion = [5, 4, 7, 14]
+        res = self.client().post(
+            "/quizzes",
+            json={"previous_questions": previousQuestion, "quiz_category": {"id": 3}},
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertEqual(data["question"], None)
+
+    def test_get_questions_if_no_category(self):
+
+        res = self.client().post(
+            "/quizzes",
+            json={"previous_questions": [], "quiz_category": {}},
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["question"])
+
+    def test_422_if_invalid_get_question_request(self):
+
+        res = self.client().post("/quizzes")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "unprocessable")
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
